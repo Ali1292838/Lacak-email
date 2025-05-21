@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Email Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  .container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+  }
+  h1 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 2.4rem;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  p.lead {
+    text-align: center;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  input[type="email"] {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  input[type="email"]:focus {
+    outline: none;
+    box-shadow: 0 0 6px 2px #b39ddb;
+    background: rgba(255, 255, 255, 0.2);
+    color: #222;
+  }
+  button {
+    background: #5a4ded;
+    font-weight: 700;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #462db9;
+  }
+  .result {
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    line-height: 1.4;
+    word-break: break-word;
+    user-select: text;
+  }
+  .code-box {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  footer {
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+  @media (max-width: 480px) {
+    .container {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Email Tracker</h1>
+    <p class="lead">Enter the email address you want to track and generate a tracking pixel code.</p>
+    <form id="trackerForm" novalidate>
+      <label for="emailInput" style="display:none;">Email Address</label>
+      <input type="email" id="emailInput" name="email" placeholder="e.g. user@example.com" required autocomplete="off" />
+      <button type="submit" aria-label="Generate Tracking Info">Track Email</button>
+    </form>
+    <div id="result" class="result" aria-live="polite" hidden></div>
+  </div>
+  <footer>
+    &copy; 2024 Email Tracker. All rights reserved.
+  </footer>
+
+<script>
+  document.getElementById('trackerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const emailInput = document.getElementById('emailInput');
+    const resultDiv = document.getElementById('result');
+    const email = emailInput.value.trim();
+
+    if (!email || !validateEmail(email)) {
+      resultDiv.hidden = false;
+      resultDiv.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    // Generate a sample tracking pixel HTML snippet
+    // In real use, this URL would need to point to your tracking server.
+    const trackingPixelURL = `https://your-server.com/track?email=${encodeURIComponent(email)}`;
+
+    const snippet = `<img src="${trackingPixelURL}" alt="" width="1" height="1" style="display:none;" />`;
+
+    resultDiv.hidden = false;
+    resultDiv.innerHTML = `
+      <strong>Tracking Information for:</strong> ${sanitizeHTML(email)}<br /><br />
+      Note: This is a simulated tracker. To actually track email opens, embed this tracking pixel HTML code in your email content.<br /><br />
+      <strong>Tracking Pixel HTML snippet:</strong>
+      <div class="code-box" tabindex="0">${snippet}</div><br />
+      <em>The tracking URL points to your server endpoint which logs email open events.</em>
+    `;
+  });
+
+  function validateEmail(email) {
+    // Simple email regex validation
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  }
+
+  function sanitizeHTML(str) {
+    const temp = document.createElement('div');
+    temp.textContent = str;
+    return temp.innerHTML;
+  }
+</script>
+</body>
+</html>
