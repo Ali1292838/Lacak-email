@@ -1,165 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Email Tracker</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-  }
-  .container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border-radius: 16px;
-    padding: 2.5rem 3rem;
-    max-width: 440px;
-    width: 100%;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
-  }
-  h1 {
-    margin-bottom: 1rem;
-    font-weight: 700;
-    font-size: 2.4rem;
-    text-align: center;
-    letter-spacing: 0.05em;
-  }
-  p.lead {
-    text-align: center;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  input[type="email"] {
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-  input[type="email"]:focus {
-    outline: none;
-    box-shadow: 0 0 6px 2px #b39ddb;
-    background: rgba(255, 255, 255, 0.2);
-    color: #222;
-  }
-  button {
-    background: #5a4ded;
-    font-weight: 700;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #462db9;
-  }
-  .result {
-    margin-top: 2rem;
-    background: rgba(255, 255, 255, 0.12);
-    padding: 1.25rem 1.5rem;
-    border-radius: 10px;
-    font-size: 1rem;
-    line-height: 1.4;
-    word-break: break-word;
-    user-select: text;
-  }
-  .code-box {
-    background: rgba(0,0,0,0.3);
-    padding: 1rem;
-    border-radius: 8px;
-    font-family: 'Courier New', Courier, monospace;
-    white-space: pre-wrap;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-  }
-  footer {
-    margin-top: 3rem;
-    text-align: center;
-    font-size: 0.9rem;
-    opacity: 0.7;
-  }
-  @media (max-width: 480px) {
-    .container {
-      padding: 2rem 1.5rem;
-    }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced IMEI Tracker Simulation</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2d3436);
+            color: #ecf0f1;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tracker-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--secondary);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 15px;
+            margin-top: 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .loader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <h1>Email Tracker</h1>
-    <p class="lead">Enter the email address you want to track and generate a tracking pixel code.</p>
-    <form id="trackerForm" novalidate>
-      <label for="emailInput" style="display:none;">Email Address</label>
-      <input type="email" id="emailInput" name="email" placeholder="e.g. user@example.com" required autocomplete="off" />
-      <button type="submit" aria-label="Generate Tracking Info">Track Email</button>
-    </form>
-    <div id="result" class="result" aria-live="polite" hidden></div>
-  </div>
-  <footer>
-    &copy; 2024 Email Tracker. All rights reserved.
-  </footer>
+    <div class="container">
+        <h1>📡 Advanced IMEI Tracker Simulation</h1>
+        
+        <div class="tracker-box">
+            <div class="input-group">
+                <input type="text" id="imeiInput" placeholder="Enter 15-digit IMEI number...">
+                <button onclick="trackIMEI()">Track Device</button>
+            </div>
+            
+            <div class="loader" id="loader"></div>
+            <div id="map"></div>
+            
+            <div class="info-box" id="infoBox"></div>
+        </div>
+    </div>
 
-<script>
-  document.getElementById('trackerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const emailInput = document.getElementById('emailInput');
-    const resultDiv = document.getElementById('result');
-    const email = emailInput.value.trim();
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let marker;
+        
+        function initMap(lat, lon) {
+            if (!map) {
+                map = L.map('map').setView([lat, lon], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+            } else {
+                map.setView([lat, lon], 13);
+            }
+            
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker([lat, lon]).addTo(map)
+                .bindPopup('Estimated Device Location');
+        }
 
-    if (!email || !validateEmail(email)) {
-      resultDiv.hidden = false;
-      resultDiv.textContent = 'Please enter a valid email address.';
-      return;
-    }
+        function generateMockData(lat, lon) {
+            return {
+                coordinates: {
+                    lat: lat + (Math.random() * 0.01 - 0.005),
+                    lng: lon + (Math.random() * 0.01 - 0.005)
+                },
+                lastSeen: new Date().toLocaleString(),
+                carrier: Math.random() > 0.5 ? 'Telkomsel' : 'XL Axiata',
+                signalStrength: Math.floor(Math.random() * 100) + '%'
+            };
+        }
 
-    // Generate a sample tracking pixel HTML snippet
-    // In real use, this URL would need to point to your tracking server.
-    const trackingPixelURL = `https://your-server.com/track?email=${encodeURIComponent(email)}`;
+        function trackIMEI() {
+            const imei = document.getElementById('imeiInput').value;
+            const loader = document.getElementById('loader');
+            const infoBox = document.getElementById('infoBox');
 
-    const snippet = `<img src="${trackingPixelURL}" alt="" width="1" height="1" style="display:none;" />`;
+            if (!/^\d{15}$/.test(imei)) {
+                alert('Invalid IMEI format! Must be 15 digits.');
+                return;
+            }
 
-    resultDiv.hidden = false;
-    resultDiv.innerHTML = `
-      <strong>Tracking Information for:</strong> ${sanitizeHTML(email)}<br /><br />
-      Note: This is a simulated tracker. To actually track email opens, embed this tracking pixel HTML code in your email content.<br /><br />
-      <strong>Tracking Pixel HTML snippet:</strong>
-      <div class="code-box" tabindex="0">${snippet}</div><br />
-      <em>The tracking URL points to your server endpoint which logs email open events.</em>
-    `;
-  });
+            loader.style.display = 'block';
+            infoBox.innerHTML = '';
 
-  function validateEmail(email) {
-    // Simple email regex validation
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  }
-
-  function sanitizeHTML(str) {
-    const temp = document.createElement('div');
-    temp.textContent = str;
-    return temp.innerHTML;
-  }
-</script>
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const mockData = generateMockData(
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+                    
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        initMap(mockData.coordinates.lat, mockData.coordinates.lng);
+                        infoBox.innerHTML = `
+                            <div class="info-card">
+                                <h3>📍 Last Location</h3>
+                                <p>${mockData.coordinates.lat.toFixed(4)}, ${mockData.coordinates.lng.toFixed(4)}</p>
+                            </div>
+                            <div class="info-card">
+                                <h3>📅 Last Seen</h3>
+                                <p>${mockData.lastSeen}</p>
+                            </div>
+                            <div class="info-card">
+                                <h3>📶 Signal Strength</h3>
+                                <p>${mockData.signalStrength}</p>
+                            </div>
+                            <div class="info-card">
+                                <h3>🏢 Carrier</h3>
+                                <p>${mockData.carrier}</p>
+                            </div>
+                        `;
+                    }, 1500);
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+                loader.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
